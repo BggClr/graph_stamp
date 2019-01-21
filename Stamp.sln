@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "src\Core\Servic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dependencies", "src\Core\Dependencies\Dependencies.csproj", "{E8279B27-1DF0-45B1-9542-2948392D9B91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Core\Models\Models.csproj", "{9C643ADC-9AD3-49F1-94E4-7B4A7F6CA2A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "src\Core\Models\Models.csproj", "{9C643ADC-9AD3-49F1-94E4-7B4A7F6CA2A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
