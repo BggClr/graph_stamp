@@ -7,7 +7,7 @@ if(![System.IO.File]::Exists("tools/warp-packer.exe")) {
 }
 
 pushd ./src/CLI/
-	dotnet publish -c Release -r win10-x64
+	dotnet publish --self-contained --configuration  Release -r win10-x64
 popd
 
 	if(![System.IO.Directory]::Exists("_")) {
