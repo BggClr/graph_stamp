@@ -29,14 +29,16 @@ namespace Stamp.CLI
 			}
 
 			public async Task Fetch(
-				[Option(ShortName = "c", LongName = "category", Description = "Component category")]string category,
-				[Option(ShortName = "n", LongName = "name", Description = "The component name")]string name
+				[Argument(Name = "category", Description = "Component category")]string category,
+				[Argument(Name = "name", Description = "Component name")]string name,
+				[Option(ShortName = "r", LongName = "ref", Description = "Component alteration (branch, tag or commit hash)")] string reference
 				)
 			{
 				await FetchComponentAppTask.Execute(new Fetch.Query
 				{
 					Name = name,
-					Category = category
+					Category = category,
+					Ref = reference
 				});
 			}
 		}
