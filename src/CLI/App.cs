@@ -13,6 +13,8 @@ namespace Stamp.CLI
 		{
 			[InjectProperty]
 			public ListComponentsAppTask ListComponentsAppTask { get; set; }
+			[InjectProperty]
+			public FetchComponentAppTask FetchComponentAppTask { get; set; }
 
 			public async Task List(
 				[Option(ShortName = "c", LongName = "category", Description = "Component category")]string category,
@@ -22,6 +24,18 @@ namespace Stamp.CLI
 				await ListComponentsAppTask.Execute(new List.Query
 				{
 					Keyword = name,
+					Category = category
+				});
+			}
+
+			public async Task Fetch(
+				[Option(ShortName = "c", LongName = "category", Description = "Component category")]string category,
+				[Option(ShortName = "n", LongName = "name", Description = "The component name")]string name
+				)
+			{
+				await FetchComponentAppTask.Execute(new Fetch.Query
+				{
+					Name = name,
 					Category = category
 				});
 			}

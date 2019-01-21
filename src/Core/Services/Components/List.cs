@@ -36,11 +36,9 @@ namespace Stamp.Services.Components
 		{
 			public MappingProfile()
 			{
-				var parseName = new Regex($"{Settings.ComponentPrefix}(?<Category>[^_]+)_(?<Name>.*)", RegexOptions.IgnoreCase);
-
 				CreateMap<Repository, Model>()
-					.ForMember(d => d.Category, o => o.MapFrom(s => parseName.Match(s.Name).Groups["Category"].Value))
-					.ForMember(d => d.Name, o => o.MapFrom(s => parseName.Match(s.Name).Groups["Name"].Value));
+					.ForMember(d => d.Category, o => o.MapFrom(s => ComponentNameConverter.GetCategory(s.Name)))
+					.ForMember(d => d.Name, o => o.MapFrom(s => ComponentNameConverter.GetName(s.Name)));
 			}
 		}
 
