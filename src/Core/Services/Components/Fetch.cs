@@ -90,7 +90,7 @@ namespace Stamp.Services.Components
 				foreach (var file in files)
 				{
 					var relativePath = folderUri.MakeRelativeUri(new Uri(file));
-					var targetPath = Path.Combine("components", localComponentName, relativePath.ToString());
+					var targetPath = Path.Combine("App_Plugins", localComponentName, relativePath.ToString());
 					var targetFolder = Path.GetDirectoryName(targetPath);
 
 					if (string.IsNullOrWhiteSpace(targetFolder))
