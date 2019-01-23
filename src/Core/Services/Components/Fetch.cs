@@ -21,10 +21,6 @@ namespace Stamp.Services.Components
 			public string Ref { get; set; }
 		}
 
-		public class Response
-		{
-		}
-
 		public class Model
 		{
 			public int Id { get; set; }
