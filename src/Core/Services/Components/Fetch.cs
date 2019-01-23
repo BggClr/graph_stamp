@@ -7,7 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Microsoft.Build.Evaluation;
 using Models;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace Stamp.Services.Components
@@ -77,17 +79,29 @@ namespace Stamp.Services.Components
 					zip.ExtractToDirectory(tmpFolderName);
 				}
 
-				var folder = Path.GetFullPath(Path.Combine(Directory.GetDirectories(tmpFolderName).First(), "src"));
+				var extractedComponentRoot = Directory.GetDirectories(tmpFolderName).First();
+				var folder = Path.GetFullPath(Path.Combine(extractedComponentRoot, "src"));
 
 				var folderUri = new Uri($"{folder}/");
 
 				var files = Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories);
 
+				var manifest = GetManifest(extractedComponentRoot);
+				Project project = null;
+
+				if (manifest.IsAddToCsprojRequired)
+				{
+					var projectCollection = new ProjectCollection();
+					project = new Project(GetProjectFilePath(), null, null, projectCollection, ProjectLoadSettings.IgnoreMissingImports);
+				}
+
 				foreach (var file in files)
 				{
 					var relativePath = folderUri.MakeRelativeUri(new Uri(file));
-					var targetPath = Path.Combine("App_Plugins", localComponentName, relativePath.ToString());
+					var targetPath = Path.Combine(manifest.Destination, localComponentName, relativePath.ToString());
 					var targetFolder = Path.GetDirectoryName(targetPath);
+
+					AddItemToProjectIfNeeded(project, targetPath);
 
 					if (string.IsNullOrWhiteSpace(targetFolder))
 					{
@@ -102,10 +116,42 @@ namespace Stamp.Services.Components
 					File.Copy(file, targetPath);
 				}
 
+				project?.Save();
+
 				if (Directory.Exists(tmpFolderName))
 				{
 					Directory.Delete(tmpFolderName, true);
 				}
+			}
+
+			private static void AddItemToProjectIfNeeded(Project project, string targetPath)
+			{
+				if (project == null || project.Items.Any(p => p.EvaluatedInclude.Equals(targetPath)))
+				{
+					return;
+				}
+
+				var refPath = targetPath.Replace("/", "\\");
+				project.AddItem(
+					Path.GetExtension(targetPath).Equals(".cs", StringComparison.InvariantCultureIgnoreCase)
+						? "Compile"
+						: "Content", refPath);
+			}
+
+			private static ComponentManifest GetManifest(string componentRootFolder)
+			{
+				var manifestFilePath = Path.Combine(componentRootFolder, "manifest.json");
+				if (File.Exists(manifestFilePath))
+				{
+					return JsonConvert.DeserializeObject<ComponentManifest>(File.ReadAllText(manifestFilePath));
+				}
+
+				return new ComponentManifest();
+			}
+
+			private static string GetProjectFilePath()
+			{
+				return Directory.GetFiles(".", "*.csproj").FirstOrDefault();
 			}
 
 			private async Task<Model> GetComponent(Query request, CancellationToken cancellationToken)
