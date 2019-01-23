@@ -17,19 +17,17 @@ namespace Stamp.CLI
 			public FetchComponentAppTask FetchComponentAppTask { get; set; }
 
 			public async Task List(
-				[Option(ShortName = "c", LongName = "category", Description = "Component category")]string category,
 				[Option(ShortName = "q", LongName = "query", Description = "Query the component name")]string name
 				)
 			{
 				await ListComponentsAppTask.Execute(new List.Query
 				{
-					Keyword = name,
-					Category = category
+					Keyword = name
 				});
 			}
 
 			public async Task Fetch(
-				[Argument(Name = "category", Description = "Component category")]string category,
+				[Argument(Name = "Owner", Description = "Component owner")]string owner,
 				[Argument(Name = "name", Description = "Component name")]string name,
 				[Option(ShortName = "r", LongName = "ref", Description = "Component alteration (branch, tag or commit hash)")] string reference
 				)
@@ -37,7 +35,7 @@ namespace Stamp.CLI
 				await FetchComponentAppTask.Execute(new Fetch.Query
 				{
 					Name = name,
-					Category = category,
+					Owner = owner,
 					Ref = reference
 				});
 			}

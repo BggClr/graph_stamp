@@ -13,10 +13,10 @@ namespace Stamp.Services.Components
 {
 	public class List
 	{
+		private const string stampComponentTopic = "stamp-component";
 		public class Query : IRequest<Response>
 		{
 			public string Keyword { get; set; }
-			public string Category { get; set; }
 		}
 
 		public class Response
@@ -28,7 +28,8 @@ namespace Stamp.Services.Components
 		{
 			public int Id { get; set; }
 			public string Name { get; set; }
-			public string Category { get; set; }
+			public string Owner { get; set; }
+			public IList<string> Categories { get; set; }
 			public string Url { get; set; }
 		}
 
@@ -37,35 +38,36 @@ namespace Stamp.Services.Components
 			public MappingProfile()
 			{
 				CreateMap<Repository, Model>()
-					.ForMember(d => d.Category, o => o.MapFrom(s => ComponentNameConverter.GetCategory(s.Name)))
-					.ForMember(d => d.Name, o => o.MapFrom(s => ComponentNameConverter.GetName(s.Name)));
+					.ForMember(d => d.Owner, o => o.MapFrom(s => s.Owner.Login))
+					.ForMember(d => d.Categories, o => o.MapFrom(s => s.Topics.Where(p => !p.Equals(stampComponentTopic, StringComparison.InvariantCultureIgnoreCase))));
 			}
+		}
+
+		private class RepositorySearchResult
+		{
+			public IList<Repository> Items { get; set; }
 		}
 
 		public class QueryHandler : IRequestHandler<Query, Response>
 		{
-			private readonly GithubAuthentication _githubAuthentication;
 			private readonly IMapper _mapper;
 
-			public QueryHandler(GithubAuthentication githubAuthentication, IMapper mapper)
+			public QueryHandler(IMapper mapper)
 			{
-				_githubAuthentication = githubAuthentication;
 				_mapper = mapper;
 			}
 
 			public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
 			{
-				var client = new RestClient("https://api.github.com/user/repos");
+				var client = new RestClient($"https://api.github.com/search/repositories?q=topic:{stampComponentTopic}");
 				var r = new RestRequest(Method.GET);
-				r.AddHeader("Authorization", _githubAuthentication.GetAuthorizationHeader());
-				var response = await client.ExecuteTaskAsync<List<Repository>>(r, cancellationToken);
+				r.AddHeader("Accept", "application/vnd.github.mercy-preview+json");
+				var response = await client.ExecuteTaskAsync<RepositorySearchResult>(r, cancellationToken);
 
 				return new Response
 				{
-					Repos = response.Data
-						.Where(p => Regex.IsMatch(p.Name, $"{Settings.ComponentPrefix}.*"))
+					Repos = response.Data.Items
 						.Select(_mapper.Map<Model>)
-						.Where(p => request.Category == null || p.Category.Equals(request.Category, StringComparison.InvariantCultureIgnoreCase))
 						.Where(p => request.Keyword == null || p.Name.ToLowerInvariant().Contains(request.Keyword.ToLowerInvariant()))
 				};
 			}

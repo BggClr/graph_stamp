@@ -4,6 +4,7 @@ namespace Models
 {
 	public class ComponentManifest
 	{
+		public string Name { get; set; }
 		public string Destination { get; set; }
 
 		[JsonProperty(PropertyName = "AddToCsproj")]

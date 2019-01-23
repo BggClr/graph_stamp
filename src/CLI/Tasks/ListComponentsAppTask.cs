@@ -26,15 +26,16 @@ namespace Stamp.CLI.Tasks
 			{
 				new List.Model
 				{
-					Category = "Category",
+					Owner = "Owner",
 					Name = "Name",
+					Categories = new [] {"Categories"},
 					Url = "Url"
 				}
 			}.Union(response.Repos);
 
 			foreach (var repo in result)
 			{
-				Console.WriteLine($"{repo.Category,-15}\t\t{repo.Name,-50}\t\t{repo.Url}");
+				Console.WriteLine($"{repo.Owner,-15}{repo.Name,-50}{string.Join(", ", repo.Categories),-100}{repo.Url}");
 			}
 		}
 	}
