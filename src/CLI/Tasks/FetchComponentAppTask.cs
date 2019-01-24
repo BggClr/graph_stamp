@@ -21,7 +21,23 @@ namespace Stamp.CLI.Tasks
 
 		protected override async Task ExecuteInternal(Fetch.Query args)
 		{
-			await _mediator.Send(args);
+			var result = await _mediator.Send(args);
+			Console.Write("\nComponent ");
+			ColorWrite($"{result.Owner}/{result.Name}", ConsoleColor.Cyan);
+			Console.Write($" has been fetched to the ");
+			ColorWrite(result.Destination, ConsoleColor.Cyan);
+			Console.WriteLine($" folder");
+			Console.Write($"For more info about the component please read ");
+			ColorWrite(result.Url, ConsoleColor.Blue);
+			Console.WriteLine();
+		}
+
+		private void ColorWrite(string text, ConsoleColor color)
+		{
+			var currentColor = Console.ForegroundColor;
+			Console.ForegroundColor = color;
+			Console.Write(text);
+			Console.ForegroundColor = currentColor;
 		}
 	}
 }

@@ -53,6 +53,10 @@ namespace Stamp.CLI.Tasks
 				{
 					AskAuthenticationDetails();
 				}
+				catch (OperationCanceledException)
+				{
+					Console.WriteLine("Operation has been cancelled");
+				}
 				catch (Exception e)
 				{
 					Console.WriteLine(e.Message);

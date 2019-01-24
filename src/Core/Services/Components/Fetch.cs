@@ -14,14 +14,22 @@ namespace Stamp.Services.Components
 {
 	public class Fetch
 	{
-		public class Query : IRequest
+		public class Query : IRequest<Response>
 		{
 			public string Owner { get; set; }
 			public string Name { get; set; }
 			public string Ref { get; set; }
 		}
 
-		public class QueryHandler : IRequestHandler<Query>
+		public class Response
+		{
+			public string Owner { get; set; }
+			public string Name { get; set; }
+			public string Url { get; set; }
+			public string Destination { get; set; }
+		}
+
+		public class QueryHandler : IRequestHandler<Query, Response>
 		{
 			private readonly IChooseOptionsService _chooseOptionsService;
 
@@ -30,7 +38,7 @@ namespace Stamp.Services.Components
 				_chooseOptionsService = chooseOptionsService;
 			}
 
-			public async Task<Unit> Handle(Query request, CancellationToken cancellationToken)
+			public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
 			{
 				var url = $"https://api.github.com/repos/{request.Owner}/{request.Name}/zipball";
 
@@ -41,14 +49,13 @@ namespace Stamp.Services.Components
 
 				var archive = await DownloadZip(url, cancellationToken);
 
-				await DeployComponent(archive, cancellationToken);
-
-				return Unit.Value;
+				return await DeployComponent(request, archive, cancellationToken);
 			}
 
-			private async Task DeployComponent(byte[] archive, CancellationToken cancellationToken)
+			private async Task<Response> DeployComponent(Query request, byte[] archive, CancellationToken cancellationToken)
 			{
 				var tmpFolderName = Guid.NewGuid().ToString();
+				Response result = null;
 				try
 				{
 					using (var stream = new MemoryStream(archive))
@@ -95,7 +102,15 @@ namespace Stamp.Services.Components
 						File.Copy(file, targetPath);
 					}
 
+					result = new Response
+					{
+						Name = request.Name,
+						Owner = request.Owner,
+						Destination = Path.Combine(manifest.Destination, manifest.Name),
+						Url = $"https://github.com/{request.Owner}/{request.Name}/blob/{request.Ref ?? "master"}/README.md"
+					};
 					project?.Save();
+					return result;
 				}
 				finally
 				{
