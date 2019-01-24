@@ -23,6 +23,13 @@ namespace Stamp.Services.Components
 
 		public class QueryHandler : IRequestHandler<Query>
 		{
+			private readonly IChooseOptionsService _chooseOptionsService;
+
+			public QueryHandler(IChooseOptionsService chooseOptionsService)
+			{
+				_chooseOptionsService = chooseOptionsService;
+			}
+
 			public async Task<Unit> Handle(Query request, CancellationToken cancellationToken)
 			{
 				var url = $"https://api.github.com/repos/{request.Owner}/{request.Name}/zipball";
@@ -34,62 +41,68 @@ namespace Stamp.Services.Components
 
 				var archive = await DownloadZip(url, cancellationToken);
 
-				DeployComponent(archive);
+				await DeployComponent(archive, cancellationToken);
 
 				return Unit.Value;
 			}
 
-			private static void DeployComponent(byte[] archive)
+			private async Task DeployComponent(byte[] archive, CancellationToken cancellationToken)
 			{
 				var tmpFolderName = Guid.NewGuid().ToString();
-				using (var stream = new MemoryStream(archive))
+				try
 				{
-					var zip = new ZipArchive(stream);
-					zip.ExtractToDirectory(tmpFolderName);
-				}
-
-				var extractedComponentRoot = Directory.GetDirectories(tmpFolderName).First();
-				var folder = Path.GetFullPath(Path.Combine(extractedComponentRoot, "src"));
-
-				var folderUri = new Uri($"{folder}/");
-
-				var files = Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories);
-
-				var manifest = GetManifest(extractedComponentRoot);
-				Project project = null;
-
-				if (manifest.IsAddToCsprojRequired)
-				{
-					var projectCollection = new ProjectCollection();
-					project = new Project(GetProjectFilePath(), null, null, projectCollection, ProjectLoadSettings.IgnoreMissingImports);
-				}
-
-				foreach (var file in files)
-				{
-					var relativePath = folderUri.MakeRelativeUri(new Uri(file));
-					var targetPath = Path.Combine(manifest.Destination, manifest.Name, relativePath.ToString());
-					var targetFolder = Path.GetDirectoryName(targetPath);
-
-					AddItemToProjectIfNeeded(project, targetPath);
-
-					if (string.IsNullOrWhiteSpace(targetFolder))
+					using (var stream = new MemoryStream(archive))
 					{
-						continue;
+						var zip = new ZipArchive(stream);
+						zip.ExtractToDirectory(tmpFolderName);
 					}
 
-					if (!Directory.Exists(targetFolder))
+					var extractedComponentRoot = Directory.GetDirectories(tmpFolderName).First();
+					var folder = Path.GetFullPath(Path.Combine(extractedComponentRoot, "src"));
+
+					var folderUri = new Uri($"{folder}/");
+
+					var files = Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories);
+
+					var manifest = GetManifest(extractedComponentRoot);
+					Project project = null;
+
+					if (manifest.IsAddToCsprojRequired)
 					{
-						Directory.CreateDirectory(targetFolder);
+						var projectCollection = new ProjectCollection();
+						var projectFilePath = await GetProjectFilePath(cancellationToken);
+						project = new Project(projectFilePath, null, null, projectCollection, ProjectLoadSettings.IgnoreMissingImports);
 					}
 
-					File.Copy(file, targetPath);
+					foreach (var file in files)
+					{
+						var relativePath = folderUri.MakeRelativeUri(new Uri(file));
+						var targetPath = Path.Combine(manifest.Destination, manifest.Name, relativePath.ToString());
+						var targetFolder = Path.GetDirectoryName(targetPath);
+
+						AddItemToProjectIfNeeded(project, targetPath);
+
+						if (string.IsNullOrWhiteSpace(targetFolder))
+						{
+							continue;
+						}
+
+						if (!Directory.Exists(targetFolder))
+						{
+							Directory.CreateDirectory(targetFolder);
+						}
+
+						File.Copy(file, targetPath);
+					}
+
+					project?.Save();
 				}
-
-				project?.Save();
-
-				if (Directory.Exists(tmpFolderName))
+				finally
 				{
-					Directory.Delete(tmpFolderName, true);
+					if (Directory.Exists(tmpFolderName))
+					{
+						Directory.Delete(tmpFolderName, true);
+					}
 				}
 			}
 
@@ -118,9 +131,10 @@ namespace Stamp.Services.Components
 				return new ComponentManifest();
 			}
 
-			private static string GetProjectFilePath()
+			private async Task<string> GetProjectFilePath(CancellationToken cancellationToken)
 			{
-				return Directory.GetFiles(".", "*.csproj").FirstOrDefault();
+				var projFiles = Directory.GetFiles(".", "*.csproj");
+				return await _chooseOptionsService.Choose(projFiles, cancellationToken);
 			}
 
 			private async Task<byte[]> DownloadZip(string url, CancellationToken cancellationToken)
