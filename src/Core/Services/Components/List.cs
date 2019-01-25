@@ -17,6 +17,8 @@ namespace Stamp.Services.Components
 		public class Query : IRequest<Response>
 		{
 			public string Keyword { get; set; }
+			public string Owner { get; set; }
+			public string Category { get; set; }
 		}
 
 		public class Response
@@ -59,7 +61,7 @@ namespace Stamp.Services.Components
 
 			public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
 			{
-				var client = new RestClient($"https://api.github.com/search/repositories?q=topic:{stampComponentTopic}");
+				var client = new RestClient($"https://api.github.com/search/repositories?q={GetSearchQuery(request)}");
 				var r = new RestRequest(Method.GET);
 				r.AddHeader("Accept", "application/vnd.github.mercy-preview+json");
 				var response = await client.ExecuteTaskAsync<RepositorySearchResult>(r, cancellationToken);
@@ -70,6 +72,22 @@ namespace Stamp.Services.Components
 						.Select(_mapper.Map<Model>)
 						.Where(p => request.Keyword == null || p.Name.ToLowerInvariant().Contains(request.Keyword.ToLowerInvariant()))
 				};
+			}
+
+			private string GetSearchQuery(Query request)
+			{
+				var keywordQuery = new[] {request.Keyword}.Where(p => !string.IsNullOrWhiteSpace(p));
+
+				var facetsQuery = new[]
+				{
+					(SerchKey: "topic", Value: stampComponentTopic),
+					(SerchKey: "topic", Value: request.Category),
+					(SerchKey: "user", Value: request.Owner)
+				}
+					.Where(p => !string.IsNullOrWhiteSpace(p.Value))
+					.Select(p => $"{p.SerchKey}:{p.Value}");
+
+				return string.Join("+", keywordQuery.Union(facetsQuery));
 			}
 		}
 	}

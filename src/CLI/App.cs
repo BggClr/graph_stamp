@@ -17,12 +17,16 @@ namespace Stamp.CLI
 			public FetchComponentAppTask FetchComponentAppTask { get; set; }
 
 			public async Task List(
-				[Option(ShortName = "q", LongName = "query", Description = "Query the component name")]string name
+				[Option(ShortName = "q", LongName = "query", Description = "Query the component name")]string name,
+				[Option(ShortName = "o", LongName = "owner", Description = "Query by the owning user")]string owner,
+				[Option(ShortName = "c", LongName = "category", Description = "Query by the component topic")]string category
 				)
 			{
 				await ListComponentsAppTask.Execute(new List.Query
 				{
-					Keyword = name
+					Keyword = name,
+					Owner = owner,
+					Category = category
 				});
 			}
 
