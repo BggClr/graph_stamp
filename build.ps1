@@ -1,3 +1,12 @@
+<#
+
+.PARAMETER Target
+
+#>
+
+[CmdletBinding()]
+Param([string]$Target)
+
 if(![System.IO.File]::Exists("tools/warp-packer.exe")) {
 	if(![System.IO.Directory]::Exists("tools")) {
 		New-Item "tools" -itemtype directory
@@ -15,3 +24,5 @@ popd
 	}
 
 .\tools\warp-packer --arch windows-x64 --input_dir src/CLI/bin/netcoreapp2.2/win10-x64/publish --exec stamp.exe --output _\stamp.exe
+
+Copy-Item _\stamp.exe -Destination $Target
