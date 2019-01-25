@@ -2,7 +2,7 @@ properties([buildDiscarder(logRotator(numToKeepStr: '5')), disableConcurrentBuil
 
 def artifactsUrl = 'ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/graph_stamp-artifacts'
 
-node('che-windows-01') {
+node('che-1') {
 	def repoPath = 'repo'
 	def artifactsPath = 'artifacts'
 	def commitMessage = 'auto'
