@@ -31,7 +31,7 @@ node('che-1') {
 		stage ('Build') {
 			dir(repoPath) {
 				try {
-					bat "build.cmd -target $artifactsPath"
+					bat "build.cmd -target ..\\$artifactsPath"
 				} catch(ex) {
 					throw ex
 				}

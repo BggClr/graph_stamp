@@ -25,4 +25,4 @@ popd
 
 .\tools\warp-packer --arch windows-x64 --input_dir src/CLI/bin/netcoreapp2.2/win10-x64/publish --exec stamp.exe --output _\stamp.exe
 
-Copy-Item _\stamp.exe -Destination $Target
+Copy-Item _\stamp.exe -Destination $Target\stamp.exe
