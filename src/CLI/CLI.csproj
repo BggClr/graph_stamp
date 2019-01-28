@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
+      <ToolCommandName>stamp</ToolCommandName>
+      <PackAsTool>True</PackAsTool>
+      <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <RootNamespace>Stamp.CLI</RootNamespace>
         <AssemblyName>Stamp</AssemblyName>
