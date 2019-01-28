@@ -3,6 +3,7 @@
     <PropertyGroup>
       <ToolCommandName>stamp</ToolCommandName>
       <PackAsTool>True</PackAsTool>
+      <PackageOutputPath>./nupkg</PackageOutputPath>
       <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <RootNamespace>Stamp.CLI</RootNamespace>
