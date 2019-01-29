@@ -1,7 +1,11 @@
 # Stamp
-command line interface
-[![Build status](https://ci.appveyor.com/api/projects/status/0p5rfgk5b2kyban2?svg=true)](https://ci.appveyor.com/project/graphuk/graph-stamp) [![NuGet](https://img.shields.io/nuget/v/stamp.svg)](https://www.nuget.org/packages/Stamp)
+command line interface  
+[![Build status](https://ci.appveyor.com/api/projects/status/0p5rfgk5b2kyban2?svg=true)](https://ci.appveyor.com/project/graphuk/graph-stamp) [![NuGet](https://img.shields.io/nuget/v/stamp.svg)](https://www.nuget.org/packages/Stamp)  
 Stamp searches repositories on github marked with **stamp-component** topic and fetches it to current folder
+
+## Installation
+Stamp is deployed as dotnet global tool:
+`dotnet tool install --global Stamp`
 
 ## Component repository requirements
 **src** folder containing component content
