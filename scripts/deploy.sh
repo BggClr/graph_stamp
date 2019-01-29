@@ -13,5 +13,5 @@ if [ $status_code = 200 ]; then
 else
     echo "publish..."
     dotnet pack $project_file --configuration Release --output "${PWD}"
-#    dotnet nuget push *.nupkg -k $NUGET_API_KEY -s https://www.nuget.org/api/v2/package
+    dotnet nuget push *.nupkg -k $NUGET_API_KEY -s https://www.nuget.org/api/v2/package
 fi
