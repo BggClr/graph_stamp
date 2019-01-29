@@ -6,7 +6,7 @@ using Models;
 using Stamp.Services.Components;
 using Stamp.Services.Settings;
 
-namespace Stamp.CLI.Tasks
+namespace Stamp.Tasks
 {
 	public class ListComponentsAppTask : BaseTask<List.Query>
 	{

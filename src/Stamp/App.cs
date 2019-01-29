@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using CommandDotNet.Attributes;
-using Stamp.CLI.Tasks;
 using Stamp.Services.Components;
+using Stamp.Tasks;
 
-namespace Stamp.CLI
+namespace Stamp
 {
 	[ApplicationMetadata(Name = "stamp")]
 	public class App

@@ -1,12 +1,11 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Models;
 using Stamp.Services.Components;
 using Stamp.Services.Settings;
 
-namespace Stamp.CLI.Tasks
+namespace Stamp.Tasks
 {
 	public class FetchComponentAppTask : BaseTask<Fetch.Query>
 	{

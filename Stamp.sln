@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI", "src\CLI\CLI.csproj", "{ECA5948D-A10F-4C15-9890-F8CBDF598B76}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stamp", "src\Stamp\Stamp.csproj", "{ECA5948D-A10F-4C15-9890-F8CBDF598B76}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{74BC3927-3C37-4B86-BEE0-191BD5EE78C1}"
 EndProject

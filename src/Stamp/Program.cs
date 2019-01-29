@@ -1,11 +1,11 @@
 ﻿using CommandDotNet;
 using Models;
-using Stamp.CLI.Providers;
 using Stamp.Dependencies;
+using Stamp.Providers;
 using Stamp.Services;
 using Stamp.Services.Settings;
 
-namespace Stamp.CLI
+namespace Stamp
 {
 	internal static class Program
 	{

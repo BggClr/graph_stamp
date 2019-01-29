@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Build.Evaluation;
 using Stamp.Services;
 
-namespace Stamp.CLI.Providers
+namespace Stamp.Providers
 {
 	public class ChooseOptionsService : IChooseOptionsService
 	{

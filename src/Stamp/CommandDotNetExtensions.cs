@@ -1,7 +1,7 @@
 using CommandDotNet;
 using Grace.DependencyInjection;
 
-namespace Stamp.CLI
+namespace Stamp
 {
 	public static class CommandDotNetExtensions
 	{

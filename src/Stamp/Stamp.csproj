@@ -6,7 +6,6 @@
       <PackageOutputPath>./nupkg</PackageOutputPath>
       <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-        <RootNamespace>Stamp.CLI</RootNamespace>
         <AssemblyName>Stamp</AssemblyName>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>

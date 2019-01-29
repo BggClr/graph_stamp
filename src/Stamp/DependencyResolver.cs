@@ -2,7 +2,7 @@ using System;
 using CommandDotNet;
 using Grace.DependencyInjection;
 
-namespace Stamp.CLI
+namespace Stamp
 {
 	public class DependencyResolver : IDependencyResolver
 	{

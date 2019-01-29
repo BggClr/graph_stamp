@@ -4,7 +4,7 @@ using Models;
 using Models.Exceptions;
 using Stamp.Services.Settings;
 
-namespace Stamp.CLI.Tasks
+namespace Stamp.Tasks
 {
 	public abstract class BaseTask<T>
 	{
