@@ -1,0 +1,16 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+
+build_script:
+  - dotnet build
+
+environment:
+  NUGET_API_KEY:
+    secure: QD2ficvKv6dzwLkMlpHBBH/j0mjMDIGQzfHHalUVIWt14JCbd1ThMRrkPTUF10e2
+
+deploy_script:
+  - bash scripts\deploy.sh
+
+branches:
+  only:
+    - master
