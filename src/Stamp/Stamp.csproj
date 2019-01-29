@@ -1,13 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
       <ToolCommandName>stamp</ToolCommandName>
       <PackAsTool>True</PackAsTool>
       <PackageOutputPath>./nupkg</PackageOutputPath>
       <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
-        <AssemblyName>Stamp</AssemblyName>
-        <LangVersion>latest</LangVersion>
+      <TargetFramework>netcoreapp2.2</TargetFramework>
+      <AssemblyName>Stamp</AssemblyName>
+      <LangVersion>latest</LangVersion>
+      <PackageVersion>1.0.0</PackageVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
